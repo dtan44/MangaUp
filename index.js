@@ -4,11 +4,20 @@
 // Constants
 //
 const express = require('express')
+const bodyParser = require('body-parser')
+const message = require('./message/message')
+const postback = require('./postback')
+
 const app = express()
-const VERIFY_TOKEN = ***
-const PAGE_ACCESS_TOKEN = ***
+const VERIFY_TOKEN = "****"
 
 app.set('port', (process.env.PORT || 5000))
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 
 app.get('/', function(request, response) {
     console.log(request.url)
@@ -34,10 +43,10 @@ app.get('/webhook', function(req, res) {
 //
 app.post('/webhook', function (req, res) {
     let data = req.body
-
+    console.log(data)
     // Make sure this is a page subscription
-    if (data.object === 'page') {
-
+    if ((data) && (data.object === 'page')) {
+        console.log("made it to loop")
         // Iterate over each entry - there may be multiple if batched
         data.entry.forEach(function(entry) {
             let pageID = entry.id
@@ -46,7 +55,9 @@ app.post('/webhook', function (req, res) {
             // Iterate over each messaging event
             entry.messaging.forEach(function(event) {
                 if (event.message) {
-                    receivedMessage(event)
+                    message.receivedMessage(event)
+                } else if (event.postback) {
+                    postback.receivedPostback(event)
                 } else {
                     console.log("Webhook received unknown event: ", event)
                 }
@@ -72,6 +83,7 @@ app.listen(app.get('port'), function(err) {
     console.log('Node app is running on port', app.get('port'))
 })
 
+<<<<<<< HEAD
 //
 // Helper Functions
 //
@@ -107,8 +119,51 @@ function receivedMessage(event) {
     }
 }
 
-function sendGenericMessage(recipientId, messageText) {
-    // To be expanded in later sections
+function sendMangaMessage(recipientId) {
+    let messageData = {
+        recipient: {
+            id: recipientId
+        },
+        message: {
+            attachment: {
+                type: "template",
+                payload: {
+                    template_type: "manga",
+                    elements: [{
+                        title: "MangaHere",
+                        subtitle: "Read Latest Manga",
+                        item_url: "https://www.mangahere.com/",               
+                        image_url: "http://cdn.marketplaceimages.windowsphone.com/v8/images/a356cfca-5729-4a98-9912-6a9d0cb39552?imageType=ws_icon_large",
+                        buttons: [{
+                        type: "web_url",
+                        url: "https://www.mangahere.com/",
+                        title: "Open Web URL"
+                        }, {
+                        type: "postback",
+                        title: "Call Postback",
+                        payload: "Payload for first bubble",
+                        }],
+                    }, {
+                        title: "MangaPanda",
+                        subtitle: "Your Hands, Now in VR",
+                        item_url: "http://www.mangapanda.com/",               
+                        image_url: "https://pbs.twimg.com/profile_images/448739275480129536/Na8El9Oc.jpeg",
+                        buttons: [{
+                        type: "web_url",
+                        url: "http://www.mangapanda.com/",
+                        title: "Open Web URL"
+                        }, {
+                        type: "postback",
+                        title: "Call Postback",
+                        payload: "Payload for second bubble",
+                        }]
+                    }]
+                }
+            }
+        }
+    }
+
+    callSendAPI(messageData);
 }
 
 function sendTextMessage(recipientId, messageText) {
@@ -120,30 +175,10 @@ function sendTextMessage(recipientId, messageText) {
             text: messageText
         }
     }
+=======
 
-    callSendAPI(messageData)
-}
+>>>>>>> 99a6998... Working Simple Bot
 
-function callSendAPI(messageData) {
-    request({
-            uri: 'https://graph.facebook.com/v2.6/me/messages',
-            qs: { access_token: PAGE_ACCESS_TOKEN },
-            method: 'POST',
-            json: messageData
-        },
 
-        function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                let recipientId = body.recipient_id
-                let messageId = body.message_id
 
-                console.log("Successfully sent generic message with id %s to recipient %s", 
-                messageId, recipientId)
-            } else {
-                console.error("Unable to send message.")
-                console.error(response)
-                console.error(error)
-            }
-        }
-    )
-}
+
