@@ -1,5 +1,5 @@
 let fbApi = require('./fbApi')
-
+let verify = require("../manga/verify")
 
 function receivedMessage(event) {
     let senderID = event.sender.id
@@ -13,7 +13,7 @@ function receivedMessage(event) {
 
     let messageId = message.mid
 
-    let messageFull = message.text.split(":")
+    let messageFull = message.text.toLowerCase().split(":")
     let messageAttachments = message.attachments
 
     let messageHead = null
@@ -40,9 +40,9 @@ function receivedMessage(event) {
     if (messageHead) {
         // If we receive a command, check command and reply back
         console.log(`1-${messageHead} and 2-${messageText}`)
-        switch (messageHead.toLowerCase()) {
+        switch (messageHead) {
             case 'check':
-                sendTextMessage(senderID, `checking ${messageText}`)
+                verify.verifyManga(senderID, `checking ${messageText}`)
                 break
             default:
                 sendTextMessage(senderID, "Unknown Command: reply \"help\" for more commands")
@@ -52,7 +52,7 @@ function receivedMessage(event) {
 
         // If we receive a text message, check to see if it matches a keyword
         // and send back the example. Otherwise, just echo the text we received.
-        switch (messageText.toLowerCase()) {
+        switch (messageText) {
             case 'manga':
                 sendMangaMessage(senderID)
                 break
