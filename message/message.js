@@ -13,28 +13,18 @@ function receivedMessage(event) {
 
     let messageId = message.mid
 
-    let messageFull = message.text.toLowerCase().split(":")
+    let messageFull = message.text.toLowerCase().split(" ")
     let messageAttachments = message.attachments
 
     let messageHead = null
     let messageText = null
 
-    if (messageFull.length == 2) {
-        messageText = messageFull[1]
+    if (messageFull.length > 1) {
+        messageText = messageFull.slice(1).reduce((a,b)=>a+" "+b,"").trim()
+        messageHead = messageFull[0]
     }
-
-    // check number of elements after split
-    switch (messageFull.length) {
-        case 1:
-            messageText = messageFull[0].trim()
-            break
-        case 2:
-            messageHead = messageFull[0].trim()
-            messageText = messageFull[1].trim()
-            break
-        default:
-            sendTextMessage(senderID, "Error in Message: wrong use of colon")
-            return
+    else {
+        messageText = messageFull[0]
     }
 
     if (messageHead) {
@@ -42,7 +32,7 @@ function receivedMessage(event) {
         console.log(`1-${messageHead} and 2-${messageText}`)
         switch (messageHead) {
             case 'check':
-                verify.verifyManga(senderID, `checking ${messageText}`)
+                verify.verifyManga(senderID, messageText)
                 break
             default:
                 sendTextMessage(senderID, "Unknown Command: reply \"help\" for more commands")
@@ -82,6 +72,20 @@ function sendMangaMessage(recipientId) {
                 payload: {
                     template_type: "generic",
                     elements: [{
+                        title: "KissManga",
+                        subtitle: "Read Latest Manga",
+                        item_url: "http://www.kissmanga.com/",               
+                        image_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk2PUsbcI5Bp5kLFo4HLVeU_MPXaJqBPPSmF7x6B4wqyuON07mXaiRbd0",
+                        buttons: [{
+                        type: "web_url",
+                        url: "http://www.mangapanda.com/",
+                        title: "Open Web URL"
+                        }, {
+                        type: "postback",
+                        title: "Call Postback",
+                        payload: "Payload for second bubble",
+                        }]
+                    }, {
                         title: "MangaHere",
                         subtitle: "Read Latest Manga",
                         item_url: "https://www.mangahere.com/",               
@@ -95,20 +99,6 @@ function sendMangaMessage(recipientId) {
                         title: "Call Postback",
                         payload: "Payload for first bubble",
                         }],
-                    }, {
-                        title: "MangaPanda",
-                        subtitle: "Your Hands, Now in VR",
-                        item_url: "http://www.mangapanda.com/",               
-                        image_url: "https://pbs.twimg.com/profile_images/448739275480129536/Na8El9Oc.jpeg",
-                        buttons: [{
-                        type: "web_url",
-                        url: "http://www.mangapanda.com/",
-                        title: "Open Web URL"
-                        }, {
-                        type: "postback",
-                        title: "Call Postback",
-                        payload: "Payload for second bubble",
-                        }]
                     }]
                 }
             }
