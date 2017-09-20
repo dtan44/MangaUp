@@ -1,5 +1,5 @@
 let fbApi = require('./fbApi')
-let verify = require("../manga/verify")
+let manga = require("../manga/manga").manga
 
 function receivedMessage(event) {
     let senderID = event.sender.id
@@ -32,10 +32,14 @@ function receivedMessage(event) {
         console.log(`1-${messageHead} and 2-${messageText}`)
         switch (messageHead) {
             case 'check':
-                verify.verifyManga(senderID, messageText)
+                manga.checkManga(senderID, messageText)
+                break
+            case 'source':
+                manga.sourceManga(senderID, messageText)
                 break
             default:
                 sendTextMessage(senderID, "Unknown Command: reply \"help\" for more commands")
+                break
         }
 
     } else if (messageText) {
@@ -46,11 +50,12 @@ function receivedMessage(event) {
             case 'manga':
                 sendMangaMessage(senderID)
                 break
-
             case 'help':
-                sendTextMessage(senderID, "Available Commands: check")
+                sendTextMessage(senderID, "Available Commands:\ncheck (manga)\nsource (manga domain)\nsource options")
                 break
-
+            case 'source':
+                manga.sourceManga(senderID, messageText)
+                break
             default:
                 sendTextMessage(senderID, messageText)
         }
@@ -72,9 +77,9 @@ function sendMangaMessage(recipientId) {
                 payload: {
                     template_type: "generic",
                     elements: [{
-                        title: "KissManga",
+                        title: "MangaPanda",
                         subtitle: "Read Latest Manga",
-                        item_url: "http://www.kissmanga.com/",               
+                        item_url: "http://www.mangapanda.com/",               
                         image_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk2PUsbcI5Bp5kLFo4HLVeU_MPXaJqBPPSmF7x6B4wqyuON07mXaiRbd0",
                         buttons: [{
                         type: "web_url",
