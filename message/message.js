@@ -1,14 +1,15 @@
 let fbApi = require('./fbApi')
 let manga = require("../manga/manga").manga
+let db = require('../database/db')
 
 function receivedMessage(event) {
-    let senderID = event.sender.id
-    let recipientID = event.recipient.id
+    let senderId = event.sender.id
+    let recipientId = event.recipient.id
     let timeOfMessage = event.timestamp
     let message = event.message
  
     console.log("Received message for user %d and page %d at %d with message:", 
-    senderID, recipientID, timeOfMessage)
+    senderId, recipientId, timeOfMessage)
     console.log(JSON.stringify(message))
 
     let messageId = message.mid
@@ -32,13 +33,24 @@ function receivedMessage(event) {
         console.log(`1-${messageHead} and 2-${messageText}`)
         switch (messageHead) {
             case 'check':
-                manga.checkManga(senderID, messageText)
+                if (messageText == "all") {
+                    manga.checkAll({id:senderId})
+                }
+                else {
+                    manga.checkManga(senderId, messageText, manga.source)
+                }
                 break
             case 'source':
-                manga.sourceManga(senderID, messageText)
+                manga.sourceManga(senderId, messageText, manga)
+                break
+            case 'save':
+                manga.checkManga(senderId, messageText, manga.source, "save")
+                break
+            case 'delete':
+                manga.checkManga(senderId, messageText, manga.source, "delete")
                 break
             default:
-                sendTextMessage(senderID, "Unknown Command: reply \"help\" for more commands")
+                sendTextMessage(senderId, "Unknown Command: reply \"help\" for more commands")
                 break
         }
 
@@ -48,21 +60,30 @@ function receivedMessage(event) {
         // and send back the example. Otherwise, just echo the text we received.
         switch (messageText) {
             case 'manga':
-                sendMangaMessage(senderID)
+                sendMangaMessage(senderId)
                 break
             case 'help':
-                sendTextMessage(senderID, "Available Commands:\ncheck (manga)\nsource (manga domain)\nsource options")
+                sendTextMessage(senderId, "Available Commands:\ncheck (manga)\nsave (manga)\ndelete (manga)\nlist\nsource (manga domain)\nsource options")
                 break
             case 'source':
-                manga.sourceManga(senderID, messageText)
+                manga.sourceManga(senderId, messageText, manga)
+                break
+            case 'start':
+                sendTextMessage(senderId, "Welcome to MangaUp!\nI believe in reading manga EVERYWHERE, even on facebook. Hope you enjoy my services :D")
+                break
+            case 'list':
+                db.listAll({id:senderId})
+                break
+            case 'changesource':
+                sendQuickResponseSource(senderId)
                 break
             default:
-                sendTextMessage(senderID, messageText)
+                sendTextMessage(senderId, messageText)
         }
     } else if (messageAttachments) {
-        sendTextMessage(senderID, "Message with attachment received")
+        sendTextMessage(senderId, "Message with attachment received")
     } else {
-        sendTextMessage(senderID, "Message Error")
+        sendTextMessage(senderId, "Message Error")
     }
 }
 
@@ -124,6 +145,31 @@ function sendTextMessage(recipientId, messageText) {
         }
     }
 
+    fbApi.callSendAPI(messageTyping)
+    fbApi.callSendAPI(messageData)
+}
+
+function sendQuickResponseSource(recipientId) {
+    let messageData = {
+        recipient: {
+            id: recipientId
+        },
+        message: {
+            text: `You are currently sourced from "${manga.source.name}"\nHere are your choices`,
+            "quick_replies":[
+              {
+                "content_type":"text",
+                "title":"MangaHere",
+                "payload":"MANGAHERE",
+              },
+              {
+                "content_type":"text",
+                "title":"MangaPanda",
+                "payload":"MANGAPANDA"
+              }
+            ]
+        }
+    }
     fbApi.callSendAPI(messageData)
 }
 

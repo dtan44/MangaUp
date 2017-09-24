@@ -6,7 +6,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const message = require('./message/message')
-const postback = require('./postback')
+const postback = require('./message/postback')
 
 const app = express()
 const VERIFY_TOKEN = "***"
@@ -49,12 +49,27 @@ app.post('/webhook', function (req, res) {
         console.log("made it to loop")
         // Iterate over each entry - there may be multiple if batched
         data.entry.forEach(function(entry) {
-            let pageID = entry.id
+            let pageId = entry.id
             let timeOfEvent = entry.time
 
             // Iterate over each messaging event
             entry.messaging.forEach(function(event) {
-                if (event.message) {
+                if (event.message && (!event.message.quick_reply)) {
+                    message.receivedMessage(event)
+                } else if (event.postback && (event.postback.payload=="START")) {
+                    event.message = {"text":"start"}
+                    message.receivedMessage(event)
+                } else if (event.postback && (event.postback.payload=="SOURCE")) {
+                    event.message = {"text":"changesource"}
+                    message.receivedMessage(event)
+                } else if (event.postback && (event.postback.payload=="LIST")) {
+                    event.message = {"text":"list"}
+                    message.receivedMessage(event)
+                } else if (event.message && (event.message.quick_reply.payload=="MANGAHERE")) {
+                    event.message = {"text":"source mangahere"}
+                    message.receivedMessage(event)
+                } else if (event.message && (event.message.quick_reply.payload=="MANGAPANDA")) {
+                    event.message = {"text":"source mangapanda"}
                     message.receivedMessage(event)
                 } else if (event.postback) {
                     postback.receivedPostback(event)

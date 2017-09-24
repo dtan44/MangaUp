@@ -1,6 +1,6 @@
 {
   "name": "mangaup",
-  "version": "1.0.0",
+  "version": "1.3.0",
   "description": "Facebook Messenger Bot API for Manga Updates",
   "main": "index.js",
   "repository": {
@@ -17,6 +17,7 @@
     "body-parser": "^1.17.2",
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.15.4",
+    "pg": "7.3.0",
     "request": "^2.81.0"
   }
 }

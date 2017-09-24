@@ -1,4 +1,4 @@
-let message = require("./message/message")
+let message = require("./message")
 
 function receivedPostback(event) {
   let senderID = event.sender.id
