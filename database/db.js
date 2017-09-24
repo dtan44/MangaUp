@@ -15,7 +15,7 @@ function addManga(entry) {
     client.query(query, (err, res) => {
       if (err) {
         console.log("ERROR WITH DB: "+err)
-        message.sendTextMessage(entry.id, `I'm having problems listing your manga. Try again later? :'(`)
+        message.sendTextMessage(entry.id, `I'm having problems saving your manga. Try again later? :'(`)
       }
       else {
         if (res.rows.length >= 10) {
@@ -39,7 +39,20 @@ function addManga(entry) {
 }
 
 function checkAll(entry) {
-    return
+    let query = `SELECT * FROM manga WHERE id = '${entry.id}';`
+    console.log("QUERY:"+query)
+    client.query(query, (err, res) => {
+      if (err) {
+        console.log("ERROR WITH DB: "+err)
+        message.sendTextMessage(entry.id, `I'm having problems listing your manga. Try again later? :'(`)
+      }
+      else {
+        for (var i = 0; i < res.rows.length; i++) {
+          item = res.rows[i]
+          entry.callback(entry.id,item.manganame,entry.msource[item.source])
+        }
+      }
+  })
 }
 
 function deleteManga(entry) {

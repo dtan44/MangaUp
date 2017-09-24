@@ -53,7 +53,7 @@ function checkManga(senderId, manga, source, action) {
 }
 
 function checkAll(senderId) {
-    db.checkAll()
+    db.checkAll({"id":senderId,"msource":MSOURCE,"callback":checkManga})
 }
 
 function sourceManga(senderId, mangaSource, obj) {

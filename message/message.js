@@ -34,7 +34,7 @@ function receivedMessage(event) {
         switch (messageHead) {
             case 'check':
                 if (messageText == "all") {
-                    manga.checkAll({id:senderId})
+                    manga.checkAll(senderId)
                 }
                 else {
                     manga.checkManga(senderId, messageText, manga.source)
