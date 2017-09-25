@@ -62,6 +62,9 @@ app.post('/webhook', function (req, res) {
                 } else if (event.postback && (event.postback.payload=="SOURCE")) {
                     event.message = {"text":"changesource"}
                     message.receivedMessage(event)
+                } else if (event.postback && (event.postback.payload=="ALL")) {
+                    event.message = {"text":"check all"}
+                    message.receivedMessage(event)
                 } else if (event.postback && (event.postback.payload=="LIST")) {
                     event.message = {"text":"list"}
                     message.receivedMessage(event)
