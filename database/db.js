@@ -38,21 +38,13 @@ function addManga(entry) {
     })
 }
 
+// entry requirements:
+//    id
+//    callback
 function checkAll(entry) {
     let query = `SELECT * FROM manga WHERE id = '${entry.id}';`
     console.log("QUERY:"+query)
-    client.query(query, (err, res) => {
-      if (err) {
-        console.log("ERROR WITH DB: "+err)
-        message.sendTextMessage(entry.id, `I'm having problems listing your manga. Try again later? :'(`)
-      }
-      else {
-        for (var i = 0; i < res.rows.length; i++) {
-          item = res.rows[i]
-          entry.callback(entry.id,item.manganame,entry.msource[item.source])
-        }
-      }
-  })
+    client.query(query, entry.callback)
 }
 
 function deleteManga(entry) {
@@ -78,7 +70,7 @@ function listAll(entry) {
         message.sendTextMessage(entry.id, `I'm having problems listing your manga. Try again later? :'(`)
       }
       else {
-        message.sendTextMessage(entry.id, res.rows.reduce((total,value)=>{return total+'\n'+value.manganame+' ('+value.source+')'},'Your Saved List:'))
+        message.sendTextMessage(entry.id, res.rows.reduce((total,value)=>{return total+'\n\n'+value.manganame+' ('+value.source+')'},'Your Saved List:'))
       }
     })
 }

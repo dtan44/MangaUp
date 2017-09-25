@@ -7,6 +7,8 @@ function receivedMessage(event) {
     let recipientId = event.recipient.id
     let timeOfMessage = event.timestamp
     let message = event.message
+
+    console.log("SENDERID:"+senderId)
  
     console.log("Received message for user %d and page %d at %d with message:", 
     senderId, recipientId, timeOfMessage)
@@ -37,17 +39,43 @@ function receivedMessage(event) {
                     manga.checkAll(senderId)
                 }
                 else {
-                    manga.checkManga(senderId, messageText, manga.source)
+                    let entry = {
+                        senderId:senderId,
+                        manga:messageText,
+                        source:manga.source
+                    }
+                    manga.checkManga(entry)
                 }
+                break
+            case 'url':
+                var entry = {
+                    senderId:senderId,
+                    url:messageText.split(" ")[0],
+                    action:messageText.split(" ")[1],
+                    source:manga.source
+                }
+                manga.checkManga(entry)
                 break
             case 'source':
                 manga.sourceManga(senderId, messageText, manga)
                 break
             case 'save':
-                manga.checkManga(senderId, messageText, manga.source, "save")
+                var entry = {
+                        senderId:senderId,
+                        manga:messageText,
+                        source:manga.source,
+                        action:"save"
+                }
+                manga.checkManga(entry)
                 break
             case 'delete':
-                manga.checkManga(senderId, messageText, manga.source, "delete")
+                var entry = {
+                        senderId:senderId,
+                        manga:messageText,
+                        source:manga.source,
+                        action:"delete"
+                    }
+                manga.checkManga(entry)
                 break
             default:
                 sendTextMessage(senderId, "Unknown Command: reply \"help\" for more commands")
@@ -55,7 +83,6 @@ function receivedMessage(event) {
         }
 
     } else if (messageText) {
-
         // If we receive a text message, check to see if it matches a keyword
         // and send back the example. Otherwise, just echo the text we received.
         switch (messageText) {
@@ -159,8 +186,8 @@ function sendQuickResponseSource(recipientId) {
             "quick_replies":[
               {
                 "content_type":"text",
-                "title":"MangaHere",
-                "payload":"MANGAHERE",
+                "title":"MangaNel",
+                "payload":"MANGANEL",
               },
               {
                 "content_type":"text",
@@ -173,8 +200,30 @@ function sendQuickResponseSource(recipientId) {
     fbApi.callSendAPI(messageData)
 }
 
+function sendQuickResponseMangaNel(recipientId, action, results) {
+    let reply = []
+    console.log("RESULT:"+JSON.stringify(results))
+    for (var i = 0; i < results.length; i++) {
+        reply.push({"content_type":"text","title":results[i].name,"payload":"url "+results[i].url + " " + action})
+    }
+    console.log("REPLY:"+JSON.stringify(reply))
+    console.log(recipientId)
+
+    let messageData = {
+        recipient: {
+            id: recipientId
+        },
+        message: {
+            text: `You are currently sourced from "manganel".\nHere are your choices`,
+            "quick_replies": reply
+        }
+    }
+    fbApi.callSendAPI(messageData)
+}
+
 module.exports.receivedMessage = receivedMessage
 module.exports.sendMangaMessage = sendMangaMessage
 module.exports.sendTextMessage = sendTextMessage
+module.exports.sendQuickResponseMangaNel = sendQuickResponseMangaNel
 
 

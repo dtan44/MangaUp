@@ -68,11 +68,14 @@ app.post('/webhook', function (req, res) {
                 } else if (event.postback && (event.postback.payload=="LIST")) {
                     event.message = {"text":"list"}
                     message.receivedMessage(event)
-                } else if (event.message && (event.message.quick_reply.payload=="MANGAHERE")) {
-                    event.message = {"text":"source mangahere"}
+                } else if (event.message && (event.message.quick_reply.payload=="MANGANEL")) {
+                    event.message = {"text":"source manganel"}
                     message.receivedMessage(event)
                 } else if (event.message && (event.message.quick_reply.payload=="MANGAPANDA")) {
                     event.message = {"text":"source mangapanda"}
+                    message.receivedMessage(event)
+                } else if (event.message) {
+                    event.message = {"text":event.message.quick_reply.payload}
                     message.receivedMessage(event)
                 } else if (event.postback) {
                     postback.receivedPostback(event)
@@ -90,6 +93,8 @@ app.post('/webhook', function (req, res) {
         res.sendStatus(200)
     }
 })
+
+app.get('/privacy', function(req, res) {res.sendFile('./html/privacy-policy.html', {root: __dirname })})
 
 //
 // App Start
