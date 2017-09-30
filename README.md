@@ -1,87 +1,49 @@
-# Project Title
+<img src="https://github.com/dtan44/MangaUp/blob/master/mangauplogo.png" alt="MangaUp"/>
 
-One Paragraph of project description goes here
+# MangaUp
+
+MangaUp is a facebook messenger bot designed to check for manga updates from various online sources. All logos and pictures are designed and taken by [dtan44](https://github.com/dtan44).
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+The chat bot can be accessed at [MangaUp's page](https://www.facebook.com/MangaUpPage). Send a message to MangaUp's page to get started.
 
-### Prerequisites
+### Chat Commands
 
-What things you need to install the software and how to install them
+Here are the current commands avaliable to MangaUp:
 
-```
-Give examples
-```
+    - help: returns list of possible commands
+    - source: returns current manga source
+    - source options: returns list of possible sources
+    - source (source): changes manga source to (source)
+    - check (manga): checks (manga) for latest chapter
+    - save (manga): saves (manga) to favorite list
+    - delete (manga): deletes (manga) from favorite list
+    - list: returns list of saved manga from favorite list
+    - check all: returns latest chapters from all mangas in favorite list
 
-### Installing
+## Technologies Used
 
-A step by step series of examples that tell you have to get a development env running
+This project is implemented in node.js and hosted in Heroku. [Express.js](https://github.com/expressjs/express) was used to create the API endpoints, while [Cloudscraper.js](https://github.com/codemanki/cloudscraper) and [Cheerio.js](https://github.com/cheeriojs/cheerio) are used to get and parse manga website htmls respectively. Heroku's postgres database is also used to store user's favorite manga list. 
 
-Say what the step will be
+## Future
 
-```
-Give the example
-```
+Since MangaUp is a personal project and is currently utilizing Heroku's hobby-dev plans, future feature development might not be immediate. However, there are many next steps for this project:
 
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
+    - Creating unit tests
+    - Adding more manga sources
+    - Sending periodic manga updates from saved list
+    - Improving button/graphic interface
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **Dylan Tan** - *Main Programmer* - [dtan44](https://github.com/dtan44)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.txt](https://github.com/dtan44/MangaUp/blob/master/license.txt) file for details
 
 ## Acknowledgments
 
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
+* My friends who tested the chat bot
+* Anyone who contributed to the amazing node packages
